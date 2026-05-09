@@ -7,9 +7,10 @@ import { Menu, X, Github, Zap } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
-  { href: "#features", label: "功能" },
-  { href: "#architecture", label: "架构" },
-  { href: "#how-it-works", label: "使用指南" },
+  { href: "/#features", label: "功能" },
+  { href: "/#architecture", label: "架构" },
+  { href: "/#how-it-works", label: "使用指南" },
+  { href: "/resume", label: "关于我" },
 ]
 
 export function Header() {

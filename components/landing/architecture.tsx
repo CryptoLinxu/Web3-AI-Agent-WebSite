@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
-import { User, Server, Bot, Wrench, ArrowDown } from "lucide-react"
+import { User, Server, Bot, Wrench, ArrowDown, Database } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const layers = [
@@ -46,6 +46,16 @@ const layers = [
     description: "Web3 工具集，包括价格查询、余额查询、Gas 估算、交易执行等",
     details: ["get-crypto-price", "get-wallet-balance", "get-gas-price", "dex-transfer"],
   },
+  {
+    id: "data",
+    title: "数据层",
+    subtitle: "Data Layer",
+    icon: Database,
+    image: "/images/layer-agent.jpg",
+    color: "violet",
+    description: "多源数据聚合层，统一对接 LLM Provider、链上 RPC 节点与持久化存储",
+    details: ["OpenAI / Anthropic API", "多链 Blockchain RPC", "Supabase PostgreSQL", "Redis 会话缓存"],
+  },
 ]
 
 const colorConfig: Record<string, { gradient: string; border: string; bg: string; text: string; shadow: string }> = {
@@ -76,6 +86,13 @@ const colorConfig: Record<string, { gradient: string; border: string; bg: string
     bg: "bg-amber-500/10",
     text: "text-amber-400",
     shadow: "shadow-amber-500/30",
+  },
+  violet: {
+    gradient: "from-violet-500 to-violet-600",
+    border: "border-violet-500/30",
+    bg: "bg-violet-500/10",
+    text: "text-violet-400",
+    shadow: "shadow-violet-500/30",
   },
 }
 
@@ -109,7 +126,7 @@ function LayerCard({ layer, isActive, onClick, index }: {
       ref={cardRef}
       onClick={onClick}
       className={cn(
-        "group relative flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-500 hover-glow md:p-5",
+        "group relative flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition-all duration-500 hover-glow md:p-4",
         isActive
           ? `${colors.border} ${colors.bg} shadow-xl ${colors.shadow}`
           : "border-border/50 bg-card/30 hover:border-border hover:bg-card/50"
@@ -123,7 +140,7 @@ function LayerCard({ layer, isActive, onClick, index }: {
       {/* 序号 */}
       <div
         className={cn(
-          "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-lg font-bold transition-all duration-300",
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-base font-bold transition-all duration-300",
           isActive
             ? `bg-gradient-to-br ${colors.gradient} text-white shadow-lg ${colors.shadow}`
             : "bg-secondary text-muted-foreground group-hover:scale-105"
@@ -148,7 +165,7 @@ function LayerCard({ layer, isActive, onClick, index }: {
 
       {/* 图标 */}
       <layer.icon className={cn(
-        "h-5 w-5 shrink-0 transition-all duration-300",
+        "h-4 w-4 shrink-0 transition-all duration-300",
         isActive ? `${colors.text} scale-110` : "text-muted-foreground group-hover:scale-105"
       )} />
     </button>
@@ -215,7 +232,7 @@ export function Architecture() {
             技术架构
           </span>
           <h2 className="mt-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            四层架构设计
+            五层架构设计
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
             清晰分离关注点，每层专注自己的职责
@@ -225,7 +242,7 @@ export function Architecture() {
         {/* 主内容 */}
         <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
           {/* 左侧 - 层级选择器 */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             {layers.map((layer, index) => (
               <div key={layer.id}>
                 <LayerCard
@@ -235,16 +252,15 @@ export function Architecture() {
                   index={index}
                 />
 
-                {/* 连接箭头 */}
                 {index < layers.length - 1 && (
-                  <div className="my-2 flex justify-center">
+                  <div className="my-0.5 flex justify-center">
                     <div className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300",
+                      "flex h-6 w-6 items-center justify-center rounded-full transition-all duration-300",
                       activeLayer === layer.id || activeLayer === layers[index + 1].id
                         ? "bg-cyan-500/20 text-cyan-400"
                         : "text-muted-foreground/30"
                     )}>
-                      <ArrowDown className="h-4 w-4" />
+                      <ArrowDown className="h-3 w-3" />
                     </div>
                   </div>
                 )}
@@ -268,7 +284,7 @@ export function Architecture() {
                 )}
               >
                 {/* 图片区域 */}
-                <div className="relative h-56 overflow-hidden md:h-72">
+                <div className="relative h-64 overflow-hidden md:h-80">
                   <Image
                     src={activeData.image}
                     alt={activeData.title}

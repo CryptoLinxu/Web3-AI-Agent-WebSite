@@ -16,7 +16,7 @@ const footerLinks = {
   ],
   community: [
     { href: "https://github.com/CryptoLinxu/Web3-AI-Agent", label: "GitHub", icon: Github },
-    { href: "https://linxu.dev", label: "Resume", icon: FileText },
+    { href: "/resume", label: "Resume", icon: FileText },
   ],
 }
 

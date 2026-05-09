@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { Wallet, MessageCircle, Sparkles, ArrowRight, RefreshCw, ExternalLink, Check, Loader2 } from "lucide-react"
 import { useState, useEffect } from "react"
 
@@ -364,7 +365,7 @@ export function HowItWorks() {
                             <div className="flex items-center gap-3">
                               <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 ring-2 ring-cyan-500/30">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-cyan-500">
-                                  <span className="text-lg font-bold text-white">$</span>
+                                  <Image src="/images/USD_Coin_icon.png" alt="USDC" width={32} height={32} className="rounded-full" />
                                 </div>
                               </div>
                               <div>
@@ -393,7 +394,7 @@ export function HowItWorks() {
                             {/* 签名 - 仅确认状态显示 */}
                             {transferStatus === "confirmed" && (
                               <div className="flex items-center justify-between animate-in fade-in slide-in-from-bottom-1 duration-300">
-                                <span className="text-xs text-muted-foreground tracking-wider">SIGNATURE</span>
+                                <span className="text-xs text-muted-foreground tracking-wider">TxHash</span>
                                 <span className="text-sm font-mono text-cyan-400">612d2S......ftXfQa</span>
                               </div>
                             )}
@@ -414,7 +415,7 @@ export function HowItWorks() {
                               </button>
                             )}
                             {transferStatus === "confirmed" && (
-                              <button className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 py-3.5 text-sm font-semibold text-white transition-all hover:shadow-lg hover:shadow-violet-500/30 hover:scale-[1.02] active:scale-[0.98]">
+                              <button className="w-full flex items-center justify-center gap-2 rounded-xl border border-cyan-500/50 bg-transparent py-3.5 text-sm font-semibold text-cyan-400 transition-all hover:bg-cyan-500/10 hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-[1.02] active:scale-[0.98]">
                                 <ExternalLink className="h-4 w-4" />
                                 查看交易详情
                               </button>
