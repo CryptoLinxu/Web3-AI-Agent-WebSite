@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { WikiHeader } from "@/components/wiki/wiki-header"
 import { WikiSidebar } from "@/components/wiki/wiki-sidebar"
+import "@/styles/wiki-content.css"
 
 export const metadata: Metadata = {
   title: "文档中心 - Quantum Nexus",

@@ -10,6 +10,7 @@ const navLinks = [
   { href: "/#features", label: "功能" },
   { href: "/#architecture", label: "架构" },
   { href: "/#how-it-works", label: "使用指南" },
+  { href: "/wiki", label: "项目Wiki" },
   { href: "/resume", label: "关于我" },
 ]
 

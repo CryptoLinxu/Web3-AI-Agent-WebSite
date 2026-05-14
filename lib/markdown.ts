@@ -16,9 +16,9 @@ function escapeHtml(text: string): string {
 
 function parseInline(text: string): string {
   // Images (must be before links)
-  text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="my-4 rounded-lg max-w-full" loading="lazy" />')
+  text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="wiki-image" loading="lazy" />')
   // Links
-  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-cyan-400 hover:text-cyan-300 underline" target="_blank" rel="noopener noreferrer">$1</a>')
+  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="wiki-link" target="_blank" rel="noopener noreferrer">$1</a>')
   // Bold + Italic
   text = text.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
   // Bold
@@ -26,7 +26,7 @@ function parseInline(text: string): string {
   // Italic
   text = text.replace(/\*(.+?)\*/g, "<em>$1</em>")
   // Inline code
-  text = text.replace(/`([^`]+)`/g, '<code class="bg-secondary/60 text-cyan-300 px-1.5 py-0.5 rounded text-[0.9em] font-mono">$1</code>')
+  text = text.replace(/`([^`]+)`/g, '<code class="wiki-inline-code">$1</code>')
   return text
 }
 
@@ -46,6 +46,9 @@ export interface MarkdownResult {
  */
 function cleanMarkdown(content: string): string {
   let cleaned = content
+
+  // Remove UTF-8 BOM (Byte Order Mark) at file start
+  cleaned = cleaned.replace(/^\uFEFF/, "")
 
   // Remove <cite>...</cite> blocks (entire block with content)
   cleaned = cleaned.replace(/<cite>[\s\S]*?<\/cite>/g, "")
@@ -107,26 +110,26 @@ export function markdownToHtml(markdown: string): MarkdownResult {
       if (inCodeBlock) {
         if (codeLanguage === "mermaid") {
           // Wrap mermaid in a placeholder div for client-side rendering
-          html += `<div class="mermaid-placeholder my-6 p-6 rounded-xl border border-border/40 bg-secondary/20" data-mermaid="${escapeHtml(codeContent.trim())}" data-index="${mermaidIndex++}">
-            <div class="flex items-center gap-2 mb-3">
-              <span class="inline-flex items-center gap-1 rounded-md bg-cyan-500/10 px-2.5 py-1 text-xs font-medium text-cyan-400">
-                <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          html += `<div class="wiki-mermaid" data-mermaid="${escapeHtml(codeContent.trim())}" data-index="${mermaidIndex++}">
+            <div class="wiki-mermaid-header">
+              <span class="wiki-mermaid-badge">
+                <svg class="wiki-mermaid-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 图表
               </span>
-              <span class="text-xs text-muted-foreground">加载中...</span>
+              <span class="wiki-mermaid-status">加载中...</span>
             </div>
-            <pre class="hidden mermaid-source text-xs text-muted-foreground overflow-x-auto">${escapeHtml(codeContent.trim())}</pre>
+            <pre class="wiki-mermaid-source mermaid-source">${escapeHtml(codeContent.trim())}</pre>
           </div>`
         } else {
           // Regular code block with language label
           const labelHtml = codeLanguage
-            ? `<div class="flex items-center justify-between px-4 py-2 border-b border-border/30 bg-secondary/40 rounded-t-xl">
-                <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">${escapeHtml(codeLanguage)}</span>
+            ? `<div class="wiki-code-block-header">
+                <span class="wiki-code-block-lang">${escapeHtml(codeLanguage)}</span>
               </div>`
             : ""
-          html += `<div class="code-block-wrapper my-5 rounded-xl border border-border/40 overflow-hidden bg-[#0d1117]">
+          html += `<div class="wiki-code-block">
             ${labelHtml}
-            <pre class="p-4 overflow-x-auto"><code class="text-sm font-mono text-[#c9d1d9] leading-relaxed">${escapeHtml(codeContent.trim())}</code></pre>
+            <pre class="wiki-code-block-content"><code>${escapeHtml(codeContent.trim())}</code></pre>
           </div>`
         }
         codeContent = ""
@@ -149,18 +152,18 @@ export function markdownToHtml(markdown: string): MarkdownResult {
     // Table detection
     if (!inTable && line.includes("|") && i + 1 < lines.length && lines[i + 1].includes("|---")) {
       inTable = true
-      tableHtml = '<div class="my-6 overflow-x-auto rounded-xl border border-border/40"><table class="w-full border-collapse text-sm"><thead><tr class="border-b border-border/40 bg-secondary/30">'
+      tableHtml = '<div class="wiki-table-wrapper"><table class="wiki-table"><thead><tr>'
       const headers = line.split("|").filter(h => h.trim()).map(h => parseInline(h.trim()))
       headers.forEach(h => {
-        tableHtml += `<th class="text-left py-3 px-4 text-foreground font-semibold">${h}</th>`
+        tableHtml += `<th>${h}</th>`
       })
       tableHtml += "</tr></thead><tbody>"
       i += 2
       while (i < lines.length && lines[i].trim().startsWith("|")) {
         const cells = lines[i].split("|").filter(c => c.trim()).map(c => parseInline(c.trim()))
-        tableHtml += '<tr class="border-b border-border/20 hover:bg-secondary/10 transition-colors">'
+        tableHtml += '<tr>'
         cells.forEach(c => {
-          tableHtml += `<td class="py-3 px-4 text-muted-foreground">${c}</td>`
+          tableHtml += `<td>${c}</td>`
         })
         tableHtml += "</tr>"
         i++
@@ -174,7 +177,7 @@ export function markdownToHtml(markdown: string): MarkdownResult {
 
     // Horizontal rule
     if (/^(-{3,}|\*{3,}|_{3,})$/.test(line.trim())) {
-      html += '<hr class="my-8 border-border/40" />'
+      html += '<hr class="wiki-hr" />'
       i++
       continue
     }
@@ -193,17 +196,17 @@ export function markdownToHtml(markdown: string): MarkdownResult {
       }
 
       const sizes: Record<number, string> = {
-        1: "text-3xl md:text-4xl font-bold mt-12 mb-6 text-foreground scroll-mt-20",
-        2: "text-2xl md:text-3xl font-bold mt-10 mb-4 text-foreground scroll-mt-20",
-        3: "text-xl md:text-2xl font-semibold mt-8 mb-3 text-foreground scroll-mt-20",
-        4: "text-lg md:text-xl font-semibold mt-6 mb-2 text-foreground scroll-mt-20",
-        5: "text-base md:text-lg font-medium mt-4 mb-2 text-foreground scroll-mt-20",
-        6: "text-sm md:text-base font-medium mt-4 mb-2 text-foreground scroll-mt-20",
+        1: "wiki-heading wiki-h1",
+        2: "wiki-heading wiki-h2",
+        3: "wiki-heading wiki-h3",
+        4: "wiki-heading wiki-h4",
+        5: "wiki-heading wiki-h5",
+        6: "wiki-heading wiki-h6",
       }
       const tag = `h${level}`
-      html += `<${tag} id="${id}" class="${sizes[level]} group">
+      html += `<${tag} id="${id}" class="${sizes[level]}">
         ${text}
-        <a href="#${id}" class="opacity-0 group-hover:opacity-100 transition-opacity ml-2 text-cyan-400 text-base no-underline" title="复制链接">#</a>
+        <a href="#${id}" class="wiki-heading-anchor" title="复制链接">#</a>
       </${tag}>`
       i++
       continue
@@ -219,7 +222,7 @@ export function markdownToHtml(markdown: string): MarkdownResult {
       i++
       continue
     } else if (inBlockquote) {
-      html += `<blockquote class="border-l-4 border-cyan-500/50 pl-4 py-2 my-4 bg-cyan-500/5 rounded-r-lg text-muted-foreground">${parseInline(blockquoteContent.trim().replace(/\n/g, "<br/>"))}</blockquote>`
+      html += `<blockquote class="wiki-blockquote">${parseInline(blockquoteContent.trim().replace(/\n/g, "<br/>"))}</blockquote>`
       inBlockquote = false
       blockquoteContent = ""
       continue
@@ -227,11 +230,11 @@ export function markdownToHtml(markdown: string): MarkdownResult {
 
     // Unordered list
     if (/^(\s*)[-*+]\s+(.+)/.test(line)) {
-      html += '<ul class="list-disc pl-6 my-3 space-y-1 text-muted-foreground">'
+      html += '<ul class="wiki-list-ul">'
       while (i < lines.length && /^(\s*)[-*+]\s+(.+)/.test(lines[i])) {
         const itemMatch = lines[i].match(/^(\s*)[-*+]\s+(.+)/)
         if (itemMatch) {
-          html += `<li class="pl-1">${parseInline(itemMatch[2])}</li>`
+          html += `<li class="wiki-list-item">${parseInline(itemMatch[2])}</li>`
         }
         i++
       }
@@ -241,11 +244,11 @@ export function markdownToHtml(markdown: string): MarkdownResult {
 
     // Ordered list
     if (/^\s*\d+\.\s+(.+)/.test(line)) {
-      html += '<ol class="list-decimal pl-6 my-3 space-y-1 text-muted-foreground">'
+      html += '<ol class="wiki-list-ol">'
       while (i < lines.length && /^\s*\d+\.\s+(.+)/.test(lines[i])) {
         const itemMatch = lines[i].match(/^\s*\d+\.\s+(.+)/)
         if (itemMatch) {
-          html += `<li class="pl-1">${parseInline(itemMatch[1])}</li>`
+          html += `<li class="wiki-list-item">${parseInline(itemMatch[1])}</li>`
         }
         i++
       }
@@ -266,12 +269,12 @@ export function markdownToHtml(markdown: string): MarkdownResult {
       paragraph += " " + lines[i]
       i++
     }
-    html += `<p class="my-3 text-muted-foreground leading-relaxed">${parseInline(paragraph)}</p>`
+    html += `<p class="wiki-paragraph">${parseInline(paragraph)}</p>`
   }
 
   // Close remaining blockquote
   if (inBlockquote) {
-    html += `<blockquote class="border-l-4 border-cyan-500/50 pl-4 py-2 my-4 bg-cyan-500/5 rounded-r-lg text-muted-foreground">${parseInline(blockquoteContent.trim().replace(/\n/g, "<br/>"))}</blockquote>`
+    html += `<blockquote class="wiki-blockquote">${parseInline(blockquoteContent.trim().replace(/\n/g, "<br/>"))}</blockquote>`
   }
 
   return { html, toc }
