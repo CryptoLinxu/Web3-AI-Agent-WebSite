@@ -1,4 +1,4 @@
-# Web3 AI Agent 文档索引
+﻿# Web3 AI Agent 文档索引
 
 > 面向 Web3 前端开发者的 AI Agent 技能体系文档
 

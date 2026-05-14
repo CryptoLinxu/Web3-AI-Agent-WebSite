@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function WikiLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="wiki-layout min-h-screen bg-background">
       <WikiHeader />
       <div className="mx-auto max-w-[1400px] px-6">
         <div className="flex gap-10">
