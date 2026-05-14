@@ -9,7 +9,7 @@ const footerLinks = {
     { href: "https://web3-ai-agent-web.vercel.app/", label: "开始使用" },
   ],
   resources: [
-    { href: "#", label: "文档" },
+    { href: "/wiki", label: "文档" },
     { href: "#", label: "API 参考" },
     { href: "#", label: "更新日志" },
     { href: "#", label: "路线图" },
