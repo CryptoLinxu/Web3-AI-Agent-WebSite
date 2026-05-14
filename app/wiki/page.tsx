@@ -123,7 +123,9 @@ const roleBasedGuides = [
 
 export default function WikiPage() {
   return (
-    <div>
+    <>
+      <main className="flex-1 min-w-0 py-8">
+        <div className="max-w-3xl">
       {/* Hero Section */}
       <div id="introduction" className="relative mb-16 overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-cyan-500/5 via-blue-500/5 to-purple-500/5 p-8 md:p-12">
         <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-cyan-500/10 blur-[80px]" />
@@ -271,6 +273,23 @@ export default function WikiPage() {
           </Link>
         </div>
       </div>
-    </div>
+        </div>
+      </main>
+
+      {/* Right Sidebar - static for index */}
+      <aside className="hidden xl:block w-48 shrink-0">
+        <div className="sticky top-20 py-8">
+          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            本页导航
+          </h4>
+          <nav className="space-y-0.5 border-l border-border/40 pl-3">
+            <a href="#introduction" className="block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">项目简介</a>
+            <a href="#quick-start" className="block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">按角色阅读</a>
+            <a href="#categories" className="block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">文档分类</a>
+            <a href="#stats" className="block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">文档统计</a>
+          </nav>
+        </div>
+      </aside>
+    </>
   )
 }
